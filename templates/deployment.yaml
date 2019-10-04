@@ -16,10 +16,8 @@ spec:
         app.kubernetes.io/name: {{ include "webapp.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-    {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        - name: {{ .Values.imagePullSecrets }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -30,11 +28,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /greeting
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /greeting
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
